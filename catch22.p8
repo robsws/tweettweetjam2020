@@ -1,86 +1,79 @@
 pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
-parts={}
+p={}
 n=500
-barx=56
-bary=110
-barw=8
+b=56
+c=110
+l=8
 w=128
-score=0
-wincol=0
-
-function updatepart(i)
-	local part = parts[i]
-	if part.y > w then
-		parts[i] = nil
+s=0
+f=0
+function u(i)
+	local q = p[i]
+	if q.y>w then
+		p[i]=nil
 	else
-		part.dx = part.dx * 0.9
-		part.dy += part.ddy
-		part.x += part.dx
-		prevy = part.y
-		part.y += part.dy
-		if prevy < bary and part.y >= bary and part.x >= barx and part.x < barx+barw then
-			score += parts[i].score
-			parts[i] = nil
+		q.dx = q.dx*0.9
+		q.dy += q.ddy
+		q.x += q.dx
+		y = q.y
+		q.y += q.dy
+		if y<c and q.y>=c and q.x>=b and q.x<b+l then
+			s+=p[i].s
+			p[i]=nil
 		else
-			parts[i] = part
+			p[i]=q
 		end
 	end
 end
-
 function _init()
 	for i=0,n do
-		parts[i]=nil
+		p[i]=nil
 	end
 end
-
 function _update()
-	wincol = (wincol+1)%16
+	f=(f+1)%16
 	if btn(0) then
-		barx -= 1
+		b-=1
 	elseif btn(1) then
-		barx += 1
+		b+=1
 	end
 	for i=0,n do
-		dxrng=rnd(100)
-		tyrng=rnd(100)
-		if tyrng < 75 then
-			typ = -1
+		d=rnd(100)
+		e=rnd(100)
+		if d<75 then
+			t=-1
 		else
-			typ = 1
+			t=1
 		end
-		if parts[i] == nil then
-			if dxrng > 99.8 then
-				local xpos = flr(rnd(w))
-				local initdx = flr(rnd(8))-4
-				local initdy = rnd(0.5)
-				local part = {x=xpos,y=0,dx=initdx,dy=initdy,ddy=0.02,score=typ}
-				parts[i] = part
+		if p[i]==nil then
+			if e>99.8 then
+				p[i]={x=flr(rnd(w)),y=0,dx=flr(rnd(8))-4,dy=rnd(0.5),ddy=0.02,s=t}
 			end
 		else
-			updatepart(i)
+			u(i)
 		end
 	end
 end
-
 function _draw()
 	cls()
-	line(barx,bary,barx+barw,bary,7)
-	for i = 0,n do
-		if parts[i] != nil then
-			if parts[i].score < 0 then
-				col = 8
+	for i=0,n do
+		if p[i]!=nil then
+			if p[i].s<0 then
+				r=8
 			else
-				col = 11
+				r=11
 			end
-			pset(parts[i].x,parts[i].y,col)
+			pset(p[i].x,p[i].y,r)
 		end
 	end
-	if score >= 22 then
-		print("win!", 60, 60, wincol)
+	line(b,c,b+l,c,7)
+	if s>=22 then
+		s=999
+		print("win!",60,60,f)
 	else
-		print(score,10,10,7)
+		print(s,10,10,7)
 	end
 end
 __gfx__
