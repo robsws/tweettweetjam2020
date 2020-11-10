@@ -26,9 +26,9 @@ function updatepart(i)
 		part.y += part.dy
 		if prevy < bary and part.y >= bary and part.x >= barx and part.x < barx+barw then
 			for col=8,13 do
-				scores[col] = max(0,scores[col]-1)
+				scores[col] = max(0,scores[col]-0.5)
 			end
-			scores[parts[i].col] += 2
+			scores[parts[i].col] += 1.5
 			parts[i] = nil
 		else
 			parts[i] = part
@@ -48,9 +48,9 @@ end
 function _update()
 	wincol = (wincol+1)%16
 	if btn(0) then
-		barx -= 1
+		barx=max(0,barx-1)
 	elseif btn(1) then
-		barx += 1
+		barx=min(w-barw,barx+1)
 	end
 	// update particles
 	for i=0,n do
@@ -97,14 +97,17 @@ function _draw()
 		end
 	end
 	for col,score in pairs(scores) do
-		if score >= 110 then
+		if not win and score >= 110 then
 			win=true
+			t=flr(time()*100)/100
 			break
 		end
 	end
 	if win == true then
 		print("win!",60,60,wincol)
+		print(t.." secs",55,68,wincol)
 	else
+		print(flr(time()*100)/100,4,4,15)
 		for col,score in pairs(scores) do
 			line(10,110+col,10+score,110+col,col)
 		end
